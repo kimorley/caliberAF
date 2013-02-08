@@ -23,7 +23,7 @@ importSubset <- function(fileName, filterColName=NULL, filterList=NULL,
 		stop( 'File specified does not exist.' )
 	}
 	# Read the header from the file
-	header <- names(read.csv(gzfile(fileName), nrows=1))
+	header <- names(read.csv(fileName, nrows=1))
 	# Identify columns we want to import
 	importCols <- rep("NULL", length(header))
 	for (i in which(header %in% keepColNames)){importCols[i] <- NA}
@@ -31,7 +31,7 @@ importSubset <- function(fileName, filterColName=NULL, filterList=NULL,
 		stop( paste("Not all column names in keepColNames found in ",fileName,sep='') )
 	}
 	# Read the rows and columns we're interested in from the .gz file (without uncompressing it)
-	temp <- read.csv(gzfile(fileName), as.is=TRUE, colClasses=importCols)
+	temp <- read.csv(fileName, as.is=TRUE, colClasses=importCols)
 	temp <- temp[temp[,filterColName] %in% filterList, ]
 	# Format date column
 	if (!is.null(dateColNames)) {
