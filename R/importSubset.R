@@ -32,7 +32,7 @@ importSubset <- function(fileName, filterColName=NULL, filterList=NULL,
 	}
 	# Read the rows and columns we're interested in from the .gz file (without uncompressing it)
 	temp <- read.csv(fileName, as.is=TRUE, colClasses=importCols,...)
-	temp <- temp[temp[,filterColName] %in% filterList, ]
+	if (!is.null(filterColName) & !is.null(filterList)) temp <- temp[temp[,filterColName] %in% filterList, ]
 	# Format date column
 	if (!is.null(dateColNames)) {
 		if (length(dateColNames) == 1){
