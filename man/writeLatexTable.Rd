@@ -8,7 +8,7 @@
 	The table produced is compatible with the LaTeX \code{booktabs} package.
 }
 \usage{
-	writeLatexTable(table, fileName, colNames=NULL, colAlign=NULL, nDec=0)
+	writeLatexTable(table, fileName, colNames=NULL, colAlign=NULL, rowNames=TRUE, nDec=0)
 }
 \arguments{
 	\item{table}{The object to be printed in LaTeX format, created e.g. using \code{table} or \code{xtabs}.}
@@ -17,6 +17,7 @@
 	\item{colAlign}{Alignment of columns in table.  Can take standard LaTeX options of left-aligned (l), 
 	right-aligned (r), and centre (c).  Can be provided as a single variable (e.g. 'rllc') or vector (e.g. c('r','l','c')).  
 	Default  will generate table in which the first column is left-justified and all others are right-justified.}
+	\item{rowNames}{Determines whether the row names/numbers from a data.frame are printed as the first column of the table.  Default is to print them.}
 	\item{nDec}{Number of decimal places to print (default is none).}
 }
 \seealso{
