@@ -1,21 +1,21 @@
 \name{writeLatexCountTable}
 \alias{writeLatexCountTable}
-\title{Wrapper for creating a LaTeX-ready table of counts and percentages (alternating columns) for incorporation into a project log}
+\title{Function for creating summaries (counts and percentages) of categorical/ordinal variables and then writing a table in LaTeX format to file for incorporation into a project log}
 \description{
-	This is a wrapper that uses table() and prop.table() to create a table of counts and percentages.  
-	The xtable library is then used to write a table in latex format to a file
-	for incorporation into a project log.  There are no modifiable options - this has been designed to suit my specifications.  
-	The table produced is compatible with the LaTeX \code{booktabs} package.
+	This function takes a data.table and a list of categorical variables and creates a summary table.
+	Summaries can be produced for subgroups as well as the total sample.  A LaTeX format table is
+	generated with all the results. The table produced is compatible with the LaTeX \code{booktabs} package.
 }
 \usage{
-	writeLatexTable(x, y, fileName)
+	writeLatexCountTable(data, vars, byVar=NULL, varNames=NULL, fileName)
 }
 \arguments{
-	\item{x}{The row variable}
-	\item{y}{The column variable}
-	\item{fileName}{The filename}
+	\item{data}{A data.table object containing the variables to be summarised.}
+	\item{vars}{A list of variable names (quoted) to be summarised.}
+	\item{byVar}{A variable indicating subgroups (also quoted).}
+	\item{varNames}{Human-readable versions of the variable names - row names for the table (optional - default is variable names).}
+	\item{fileName}{The name of the file to write to.}
 }
 \seealso{
-	\code{\link{xtable}}
+	\code{\link{xtable}, \link{data.table}}
 }
-

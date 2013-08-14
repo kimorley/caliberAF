@@ -7,7 +7,7 @@
 	generated with all the results. The table produced is compatible with the LaTeX \code{booktabs} package.
 }
 \usage{
-	writeLatexMeansTable(data, vars, byVar=NULL, varNames=NULL, fileName)
+	writeLatexMeanTable(data, vars, byVar=NULL, varNames=NULL, fileName)
 }
 \arguments{
 	\item{data}{A data.table object containing the variables to be summarised.}

@@ -3,42 +3,66 @@
 # Author: kimorley
 ###############################################################################
 
-writeLatexCountTable <- function(x, y, fileName){
-	count <- table(x,y)
-	prop <- formatC(prop.table(table(x,y),margin=2)*100,digits=1,format='f')
-	sumtab <- data.frame()
-	for (i in 1:ncol(count)){
-		sumtab <- rbind(sumtab, count[,i])
-		sumtab <- rbind(sumtab, prop[,i])
+writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName){
+	sumTab <- data.frame()	# Holds the results
+	if (is.null(varNames)){	# If user doesn't provide variable names, use those existing
+		varNames <- vars
 	}
-	sumtab <- t(sumtab)
-	row.names(sumtab) <- row.names(prop)
+	for (i in 1:length(vars)){	# First we make the calculations for the total sample
+		temp <- data[, c(vars[i]), with=FALSE]	# Subset the data for the variable of interest (to avoid using var names)
+		catLab <- table(temp)	# Category labels
+		if (length(names(catLab)) != nrow(temp[,lapply(.SD, summary)])){	# Need to generate missing data category
+			catLab <- c(names(catLab),'Missing')
+		}
+		varSum <- data.frame(Variable=c(varNames[i],rep(NA,nrow(temp[,lapply(.SD, summary)])-1)),
+				Categories=catLab,
+				count=temp[,lapply(.SD, summary)],
+				perc=temp[,lapply(.SD, summary)]/nrow(temp)*100)
+		names(varSum)[3:4] <- c("count","perc")			
+		if (!is.null(byVar)){	# If there are subgroups, calculate summaries for each
+			temp <- data[, c(vars[i],byVar), with=FALSE]
+			tempSum <- as.data.frame(temp[,lapply(.SD, summary), by=byVar])
+			grpLab <- unique(tempSum[,1])	# Subgroup labels
+			for (j in grpLab){	# For each subgroup, generate a summary
+				tempSum[tempSum[,1] %in% j,]
+				grpSum <- data.frame(count=tempSum[tempSum[,1] %in% j,][2], 
+						perc=tempSum[tempSum[,1] %in% j,][2]/sum(tempSum[tempSum[,1] %in% j,][2])*100)
+				names(grpSum) <- c("count","perc")			
+				varSum <- cbind(varSum, grpSum)								
+			}
+			grpLab <- c("Total",grpLab)
+		}else{
+			grpLab <- c("Total")
+		}
+		sumTab <- rbind(sumTab, varSum)
+	}
 	multiColNames <- function(count){
 		vec <- c()
-		for (i in 1:ncol(count)){
-			if (i == ncol(count)){
-				vec <- c(vec,paste('\\multicolumn{2}{c}{',colnames(count)[i],'} \\\\',sep=''))
+		for (i in 1:length(count)){
+			if (i == length(count)){
+				vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} \\\\',sep=''))
 			}else if(i == 1){
-				vec <- c(vec,paste('& \\multicolumn{2}{c}{',colnames(count)[i],'} & ',sep=''))
+				vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} & ',sep=''))
 			}else{
-				vec <- c(vec,paste('\\multicolumn{2}{c}{',colnames(count)[i],'} & ',sep=''))
+				vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} & ',sep=''))
 			}
 		}
 		vec <- paste(vec, collapse='')
 		return(vec)
 	}
-	multiCol <- multiColNames(count)
-	colNames <- rep(c('(N)','(\\%)'),ncol(count))
-	colnames(sumtab) <- colNames
+	multiCol <- multiColNames(grpLab)
+	colNames <- c('Characteristic','Categories',rep(c('(N)','(\\%)'),length(grpLab)))
+	colnames(sumTab) <- colNames
 	# Format table
-	table <- xtable(sumtab,digits=rep(0,ncol(sumtab)+1), align=c('l',rep('r',ncol(sumtab))))
+	table <- xtable(sumTab,digits=c(0,0,0,rep(c(0,2),length(grpLab))), align=c('l','l','l',rep('r',ncol(sumTab)-2)))
 	print(table, 
 			sanitize.text.function = function(x){x},
 			floating=FALSE, 
 			hline.after=NULL,
 			size="\\footnotesize",
-			include.rownames=TRUE,
+			include.rownames=FALSE,
 			add.to.row=list(pos=list(-1,-1,0, nrow(table)),command=c('\\toprule ',multiCol,'\\midrule ','\\bottomrule ')),
 			file=fileName
 	)
 }
+

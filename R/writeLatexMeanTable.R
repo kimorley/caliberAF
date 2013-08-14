@@ -15,17 +15,16 @@ writeLatexMeanTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName)
 			cat <- table(data[, c(byVar), with=FALSE])	# This gives us N for each subgroup
 			temp <- data[, c(i,byVar), with=FALSE]
 			tempSum <- rbind(as.data.frame(temp[,lapply(.SD, summary), by=byVar]), as.data.frame(temp[,lapply(.SD, sd, na.rm=T), by=byVar]))
-			catLab <- unique(tempSum[,1])	# Subgroup labels
-			for (j in catLab){	# For each subgroup, generate a summary
-				tempSum[tempSum[,1] %in% j,]
+			grpLab <- unique(tempSum[,1])	# Subgroup labels
+			for (j in grpLab){	# For each subgroup, generate a summary
 				grpSum <- data.frame(Mean=tempSum[tempSum[,1] %in% j,][4,2], 
 						SD=tempSum[tempSum[,1] %in% j,][8,2], 
 						N=cat[names(cat)==j]-tempSum[tempSum[,1] %in% j,][7,2])	
 				varSum <- cbind(varSum, grpSum)								
 			}
-			catLab <- c("Total",catLab)
+			grpLab <- c("Total",grpLab)
 		}else{
-			catLab <- c("Total")
+			grpLab <- c("Total")
 		}
 		sumTab <- rbind(sumTab, varSum)
 	}
@@ -37,25 +36,25 @@ writeLatexMeanTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName)
 	}
 	sumTab$Variable <- NULL
 	# Function for creating multicolumns for LaTeX table
-	multiColNames <- function(catLab, cat){
+	multiColNames <- function(grpLab, cat){
 		vec <- c()
-		for (k in 1:length(catLab)){
-			if (k == length(catLab)){
-				vec <- c(vec,paste('\\multicolumn{3}{c}{',catLab[k],' (',cat[names(cat)==catLab[k]],')} \\\\',sep=''))
+		for (k in 1:length(grpLab)){
+			if (k == length(grpLab)){
+				vec <- c(vec,paste('\\multicolumn{3}{c}{',grpLab[k],' (',cat[names(cat)==grpLab[k]],')} \\\\',sep=''))
 			}else if(k == 1){
-				vec <- c(vec,paste('& \\multicolumn{3}{c}{',catLab[k],' (',sum(cat),')} & ',sep=''))
+				vec <- c(vec,paste('& \\multicolumn{3}{c}{',grpLab[k],' (',sum(cat),')} & ',sep=''))
 			}else{
-				vec <- c(vec,paste('\\multicolumn{3}{c}{',catLab[k],' (',cat[names(cat)==catLab[k]],')} & ',sep=''))
+				vec <- c(vec,paste('\\multicolumn{3}{c}{',grpLab[k],' (',cat[names(cat)==grpLab[k]],')} & ',sep=''))
 			}
 		}
 		vec <- paste(vec, collapse='')
 		return(vec)
 	}
-	multiCol <- multiColNames(catLab, cat)
-	colNames <- rep(c('Mean','SD','N'),length(catLab))
+	multiCol <- multiColNames(grpLab, cat)
+	colNames <- rep(c('Mean','SD','N'),length(grpLab))
 	colnames(sumTab) <- colNames
 	# Format table
-	table <- xtable(sumTab,digits=c(0,rep(c(2,2,0),length(catLab))), align=c('l',rep('r',ncol(sumTab))))
+	table <- xtable(sumTab,digits=c(0,rep(c(2,2,0),length(grpLab))), align=c('l',rep('r',ncol(sumTab))))
 	print(table, 
 			sanitize.text.function = function(x){x},
 			floating=FALSE, 
