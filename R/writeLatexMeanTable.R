@@ -3,7 +3,7 @@
 # Author: kimorley
 ###############################################################################
 
-writeLatexMeansTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName){
+writeLatexMeanTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName){
 	sumTab <- data.frame()	# Holds the results
 	for (i in vars){	# First we make the calculations for the total sample
 		temp <- data[, c(i), with=FALSE]	# Subset the data for the variable of interest (to avoid using var names)
