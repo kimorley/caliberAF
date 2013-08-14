@@ -12,9 +12,7 @@
 # OUTPUT:
 # [a] A data.frame containing the relevant rows and columns from the file.
 #---------------------------------------------------------------------------------------------
-importSubset <- function(fileName, filterColName=NULL, filterList=NULL,
-		keepColNames=c('anonpatid', 'eventdate', 'medcode'),
-		dateColNames='eventdate',...){
+importSubset <- function(fileName, filterColName=NULL, filterList=NULL, keepColNames=c('anonpatid', 'eventdate', 'medcode'), dateColNames=NULL,...){
 	# Checks and preparation
 	if (is.null(filterColName) | is.null(filterList)){
 		warning( 'Filter column name and/or filter values are NULL.  All rows will be imported.' )
