@@ -10,12 +10,12 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 	}
 	for (i in 1:length(vars)){	# First we make the calculations for the total sample
 		temp <- data[, c(vars[i]), with=FALSE]	# Subset the data for the variable of interest (to avoid using var names)
-		catLab <- table(temp)	# Category labels
-		if (length(names(catLab)) != nrow(temp[,lapply(.SD, summary)])){	# Need to generate missing data category
-			catLab <- c(names(catLab),'Missing')
+		catLab <- names(table(temp))	# Category labels
+		if (length(catLab) != nrow(temp[,lapply(.SD, summary)])){	# Need to generate missing data category
+			catLab <- c(catLab,'Missing')
 		}
 		varSum <- data.frame(Variable=c(varNames[i],rep(NA,nrow(temp[,lapply(.SD, summary)])-1)),
-				Categories=catLab,
+				Categories=as.vector(catLab),
 				count=temp[,lapply(.SD, summary)],
 				perc=temp[,lapply(.SD, summary)]/nrow(temp)*100)
 		names(varSum)[3:4] <- c("count","perc")			
