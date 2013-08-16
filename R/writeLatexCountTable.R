@@ -10,6 +10,7 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 	}
 	for (i in 1:length(vars)){	# First we make the calculations for the total sample
 		temp <- data[, c(vars[i]), with=FALSE]	# Subset the data for the variable of interest (to avoid using var names)
+		temp[[1]] <- as.factor(data[, c(vars[i]), with=FALSE][[1]])	# Convert to factor 
 		catLab <- names(table(temp))	# Category labels
 		if (length(catLab) != nrow(temp[,lapply(.SD, summary)])){	# Need to generate missing data category
 			catLab <- c(catLab,'Missing')
