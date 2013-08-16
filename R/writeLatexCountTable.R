@@ -38,20 +38,24 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 	}
 	multiColNames <- function(count){
 		vec <- c()
-		for (i in 1:length(count)){
-			if (i == length(count)){
-				vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} \\\\',sep=''))
-			}else if(i == 1){
-				vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} & ',sep=''))
-			}else{
-				vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} & ',sep=''))
+		if ( length(count) > 1){
+			for (i in 1:length(count)){
+				if (i == length(count)){
+					vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} \\\\',sep=''))
+				}else if(i == 1){
+					vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} & ',sep=''))
+				}else{
+					vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} & ',sep=''))
+				}
 			}
+		}else{
+			vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} \\\\ ',sep=''))
 		}
 		vec <- paste(vec, collapse='')
 		return(vec)
 	}
 	multiCol <- multiColNames(grpLab)
-	colNames <- c('Characteristic','Categories',rep(c('(N)','(\\%)'),length(grpLab)))
+	colNames <- c('Characteristic','Categories',rep(c('N','\\%'),length(grpLab)))
 	colnames(sumTab) <- colNames
 	# Format table
 	table <- xtable(sumTab,digits=c(0,0,0,rep(c(0,2),length(grpLab))), align=c('l','l','l',rep('r',ncol(sumTab)-2)))
@@ -65,4 +69,3 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 			file=fileName
 	)
 }
-
