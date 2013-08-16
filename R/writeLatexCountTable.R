@@ -22,12 +22,12 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 		names(varSum)[3:4] <- c("count","perc")			
 		if (!is.null(byVar)){	# If there are subgroups, calculate summaries for each
 			temp <- data[, c(vars[i],byVar), with=FALSE]
+			temp[[1]] <- as.factor(data[, c(vars[i]), with=FALSE][[1]])
 			tempSum <- as.data.frame(temp[,lapply(.SD, summary), by=byVar])
 			grpLab <- unique(tempSum[,1])	# Subgroup labels
 			for (j in grpLab){	# For each subgroup, generate a summary
-				tempSum[tempSum[,1] %in% j,]
-				grpSum <- data.frame(count=tempSum[tempSum[,1] %in% j,][2], 
-						perc=tempSum[tempSum[,1] %in% j,][2]/sum(tempSum[tempSum[,1] %in% j,][2])*100)
+				grpSum <- data.frame(count=tempSum[tempSum[,1] %in% j,][1,2], 
+						perc=tempSum[tempSum[,1] %in% j,][1,2]/sum(tempSum[tempSum[,1] %in% j,][1,2])*100)
 				names(grpSum) <- c("count","perc")			
 				varSum <- cbind(varSum, grpSum)								
 			}
