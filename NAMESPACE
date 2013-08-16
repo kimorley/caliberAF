@@ -4,5 +4,11 @@ export(convertdate,
 	getDrugcodes,
 	writeLatexTable,
 	writeLatexMeanTable,
-	writeLatexCountTable
+	writeLatexCountTable,
+	tableBox,
+	boxGrob,
+	drawDetails.box,
+	xDetails.box,
+	yDetails.box
 	)
+	
