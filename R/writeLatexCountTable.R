@@ -5,6 +5,11 @@
 
 writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName){
 	sumTab <- data.frame()	# Holds the results
+	if (!is.null(byVar)){	# If there are subgroups, calculate summaries for each
+		catTab <- table(data[, c(byVar), with=FALSE])	# This gives us N for each subgroup
+	}else{
+		catTab <- nrow(data)
+	}
 	if (is.null(varNames)){	# If user doesn't provide variable names, use those existing
 		varNames <- vars
 	}
@@ -37,25 +42,25 @@ writeLatexCountTable <- function(data, vars, byVar=NULL, varNames=NULL, fileName
 		}
 		sumTab <- rbind(sumTab, varSum)
 	}
-	multiColNames <- function(count){
+	multiColNames <- function(grpLab, catTab){
 		vec <- c()
-		if ( length(count) > 1){
-			for (i in 1:length(count)){
-				if (i == length(count)){
-					vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} \\\\',sep=''))
-				}else if(i == 1){
-					vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} & ',sep=''))
+		if (length(grpLab) > 1){
+			for (k in 1:length(grpLab)){
+				if (k == length(grpLab)){
+					vec <- c(vec,paste('\\multicolumn{3}{c}{',grpLab[k],' (',catTab[names(catTab)==grpLab[k]],')} \\\\',sep=''))
+				}else if(k == 1){
+					vec <- c(vec,paste('& \\multicolumn{3}{c}{',grpLab[k],' (',sum(catTab),')} & ',sep=''))
 				}else{
-					vec <- c(vec,paste('\\multicolumn{2}{c}{',count[i],'} & ',sep=''))
+					vec <- c(vec,paste('\\multicolumn{3}{c}{',grpLab[k],' (',catTab[names(catTab)==grpLab[k]],')} & ',sep=''))
 				}
-			}
+			}	
 		}else{
-			vec <- c(vec,paste('& & \\multicolumn{2}{c}{',count[i],'} \\\\ ',sep=''))
+			vec <- c(vec,paste('& & \\multicolumn{2}{c}{',grpLab,' (',sum(catTab),')} \\\\ ',sep=''))
 		}
 		vec <- paste(vec, collapse='')
 		return(vec)
 	}
-	multiCol <- multiColNames(grpLab)
+	multiCol <- multiColNames(grpLab, catTab)
 	colNames <- c('Characteristic','Categories',rep(c('N','\\%'),length(grpLab)))
 	colnames(sumTab) <- colNames
 	# Format table
